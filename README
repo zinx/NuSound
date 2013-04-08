@@ -1,0 +1,4 @@
+NuSound Plugin for Advanced Combat Tracker (http://advancedcombattracker.com/)
+
+Makes ACT use DirectSound to output sound, and provides options for output
+device, Text-to-Speech API, and Text-to-Speech voice.
