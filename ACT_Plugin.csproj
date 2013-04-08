@@ -115,6 +115,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Replacer.cs" />
+    <Compile Include="SafeBindingSource.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SAPITTS.cs" />
     <Compile Include="TTSProvider.cs" />
   </ItemGroup>

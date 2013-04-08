@@ -48,12 +48,13 @@ namespace ACT_Plugin
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label label3;
+            System.Windows.Forms.Label label4;
             this.comboBoxDevice = new System.Windows.Forms.ComboBox();
-            this.directSoundDeviceInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.directSoundDeviceInfoBindingSource = new ACT_Plugin.SafeBindingSource(this.components);
             this.comboBoxVoice = new System.Windows.Forms.ComboBox();
-            this.voiceInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.voiceInfoBindingSource = new ACT_Plugin.SafeBindingSource(this.components);
             this.comboBoxTTSAPI = new System.Windows.Forms.ComboBox();
-            this.synthFactoryBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.synthFactoryBindingSource = new ACT_Plugin.SafeBindingSource(this.components);
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
@@ -113,6 +114,7 @@ namespace ACT_Plugin
             // 
             this.directSoundDeviceInfoBindingSource.AllowNew = false;
             this.directSoundDeviceInfoBindingSource.DataSource = typeof(NAudio.Wave.DirectSoundDeviceInfo);
+            this.directSoundDeviceInfoBindingSource.UIThreadMarshal = this;
             // 
             // comboBoxVoice
             // 
@@ -131,6 +133,7 @@ namespace ACT_Plugin
             // voiceInfoBindingSource
             // 
             this.voiceInfoBindingSource.DataSource = typeof(ACT_Plugin.VoiceInfo);
+            this.voiceInfoBindingSource.UIThreadMarshal = this;
             // 
             // comboBoxTTSAPI
             // 
@@ -149,6 +152,7 @@ namespace ACT_Plugin
             // synthFactoryBindingSource
             // 
             this.synthFactoryBindingSource.DataSource = typeof(ACT_Plugin.ISpeechSynthesizerFactory);
+            this.synthFactoryBindingSource.UIThreadMarshal = this;
             // 
             // NuSound
             // 
@@ -175,9 +179,9 @@ namespace ACT_Plugin
         private ComboBox comboBoxDevice;
         private ComboBox comboBoxTTSAPI;
         private ComboBox comboBoxVoice;
-        private BindingSource directSoundDeviceInfoBindingSource;
-        private BindingSource synthFactoryBindingSource;
-        private BindingSource voiceInfoBindingSource;
+        private SafeBindingSource directSoundDeviceInfoBindingSource;
+        private SafeBindingSource synthFactoryBindingSource;
+        private SafeBindingSource voiceInfoBindingSource;
 
         public NuSound()
 		{
