@@ -9,6 +9,7 @@ namespace ACT_Plugin
     class TTSProvider : Stream, IWaveProvider
     {
         public static string VoiceIdentifier { get; set; }
+        public static int VoiceRate { get; set; }
         public static ISpeechSynthesizerFactory TTSFactory;
 
         public static List<ISpeechSynthesizerFactory> TTSFactories = new List<ISpeechSynthesizerFactory>
@@ -89,6 +90,8 @@ namespace ACT_Plugin
 
             if (VoiceIdentifier != null && !provider.synth.Voice.Name.Equals(VoiceIdentifier))
                 provider.SetVoice();
+
+            provider.synth.Rate = VoiceRate;
 
             provider.Reset();
 

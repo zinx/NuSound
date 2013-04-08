@@ -55,12 +55,15 @@ namespace ACT_Plugin
             this.voiceInfoBindingSource = new ACT_Plugin.SafeBindingSource(this.components);
             this.comboBoxTTSAPI = new System.Windows.Forms.ComboBox();
             this.synthFactoryBindingSource = new ACT_Plugin.SafeBindingSource(this.components);
+            this.trackBarVoiceRate = new System.Windows.Forms.TrackBar();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.directSoundDeviceInfoBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.voiceInfoBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.synthFactoryBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVoiceRate)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -154,10 +157,34 @@ namespace ACT_Plugin
             this.synthFactoryBindingSource.DataSource = typeof(ACT_Plugin.ISpeechSynthesizerFactory);
             this.synthFactoryBindingSource.UIThreadMarshal = this;
             // 
+            // trackBarVoiceRate
+            // 
+            this.trackBarVoiceRate.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.trackBarVoiceRate.Location = new System.Drawing.Point(170, 81);
+            this.trackBarVoiceRate.Minimum = -10;
+            this.trackBarVoiceRate.Name = "trackBarVoiceRate";
+            this.trackBarVoiceRate.Size = new System.Drawing.Size(477, 45);
+            this.trackBarVoiceRate.TabIndex = 6;
+            this.trackBarVoiceRate.TickFrequency = 2;
+            this.trackBarVoiceRate.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trackBarVoiceRate.ValueChanged += new System.EventHandler(this.trackBarVoiceRate_ValueChanged);
+            // 
+            // label4
+            // 
+            label4.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            label4.Location = new System.Drawing.Point(85, 81);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(79, 45);
+            label4.TabIndex = 7;
+            label4.Text = "TTS Rate:";
+            label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // NuSound
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(label4);
+            this.Controls.Add(this.trackBarVoiceRate);
             this.Controls.Add(this.comboBoxTTSAPI);
             this.Controls.Add(this.comboBoxVoice);
             this.Controls.Add(label3);
@@ -169,6 +196,7 @@ namespace ACT_Plugin
             ((System.ComponentModel.ISupportInitialize)(this.directSoundDeviceInfoBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.voiceInfoBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.synthFactoryBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarVoiceRate)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -182,6 +210,7 @@ namespace ACT_Plugin
         private SafeBindingSource directSoundDeviceInfoBindingSource;
         private SafeBindingSource synthFactoryBindingSource;
         private SafeBindingSource voiceInfoBindingSource;
+        private TrackBar trackBarVoiceRate;
 
         public NuSound()
 		{
@@ -308,6 +337,7 @@ namespace ACT_Plugin
             xmlSettings.AddControlSetting(comboBoxDevice.Name, comboBoxDevice);
             xmlSettings.AddControlSetting(comboBoxTTSAPI.Name, comboBoxTTSAPI);
             xmlSettings.AddControlSetting(comboBoxVoice.Name, comboBoxVoice);
+            xmlSettings.AddControlSetting(trackBarVoiceRate.Name, trackBarVoiceRate);
 
             if (File.Exists(settingsFile))
             {
@@ -373,6 +403,11 @@ namespace ACT_Plugin
         {
             if (comboBoxVoice.SelectedValue != null)
                 TTSProvider.VoiceIdentifier = (String)comboBoxVoice.SelectedValue;
+        }
+
+        private void trackBarVoiceRate_ValueChanged(object sender, EventArgs e)
+        {
+            TTSProvider.VoiceRate = trackBarVoiceRate.Value;
         }
         #endregion
     }

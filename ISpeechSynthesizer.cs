@@ -9,6 +9,7 @@ namespace ACT_Plugin
     {
         WaveFormat WaveFormat { get; }
         ACT_Plugin.VoiceInfo Voice { get; }
+        int Rate { get; set; }
         event EventHandler SpeakCompleted;
 
         void SelectVoice(string name);

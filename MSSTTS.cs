@@ -16,6 +16,11 @@ namespace ACT_Plugin
         WaveFormat waveFormat;
 
         public WaveFormat WaveFormat { get { return waveFormat; } }
+        public int Rate
+        {
+            get { return synth.Rate; }
+            set { synth.Rate = value; }
+        }
         public event EventHandler SpeakCompleted;
 
         class VoiceInfo : ACT_Plugin.VoiceInfo
