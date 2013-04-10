@@ -61,10 +61,11 @@ namespace ACT_Plugin
         {
             Flush();
             Close();
-            synth.Dispose();
-            CreateSynth();
-            if (TTSFactory.SynthType.IsInstanceOfType(synth))
-                lock (providers) providers.Enqueue(this);
+            if (!TTSFactory.SynthType.IsInstanceOfType(synth)) {
+                synth.Dispose();
+                CreateSynth();
+            }
+            lock (providers) providers.Enqueue(this);
         }
 
         static public void EarlyInit()
@@ -83,7 +84,11 @@ namespace ACT_Plugin
                 {
                     provider = providers.Dequeue();
                     if (!TTSFactory.SynthType.IsInstanceOfType(provider.synth))
+                    {
+                        provider.synth.Dispose();
+                        provider.synth = null;
                         provider = null;
+                    }
                 }
             if (provider == null)
                 provider = new TTSProvider();
@@ -181,7 +186,7 @@ namespace ACT_Plugin
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            throw new NotImplementedException();
+            return origin != SeekOrigin.End ? offset : 0;
         }
 
         public override void SetLength(long value)
