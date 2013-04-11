@@ -15,7 +15,6 @@ namespace ACT_Plugin
         {
             IWavePlayer player = new DirectSoundOut(deviceId);
             player.Init(wave);
-            player.PlaybackStopped += player_PlaybackStopped;
             player.Play();
         }
 
@@ -31,13 +30,6 @@ namespace ACT_Plugin
         {
             IWaveProvider wave = TTSProvider.SpeakAsync(text, volumePercent);
             PlayProvider(wave);
-        }
-
-        static void player_PlaybackStopped(object sender, StoppedEventArgs e)
-        {
-            IWavePlayer player = (IWavePlayer)sender;
-            player.Stop();
-            player.Dispose();
         }
     }
 }
