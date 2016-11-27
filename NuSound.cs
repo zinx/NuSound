@@ -1,5 +1,4 @@
 ﻿using Advanced_Combat_Tracker;
-using MethodReplacer;
 using NAudio.Wave;
 using System;
 using System.IO;
@@ -56,6 +55,7 @@ namespace ACT_Plugin
             this.comboBoxTTSAPI = new System.Windows.Forms.ComboBox();
             this.synthFactoryBindingSource = new ACT_Plugin.SafeBindingSource(this.components);
             this.trackBarVoiceRate = new System.Windows.Forms.TrackBar();
+            this.dataGridViewLexicon = new System.Windows.Forms.DataGridView();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
@@ -64,6 +64,7 @@ namespace ACT_Plugin
             ((System.ComponentModel.ISupportInitialize)(this.voiceInfoBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.synthFactoryBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVoiceRate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLexicon)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -81,7 +82,7 @@ namespace ACT_Plugin
             label2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             label2.AutoSize = true;
             label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label2.Location = new System.Drawing.Point(151, 186);
+            label2.Location = new System.Drawing.Point(151, 324);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(452, 13);
             label2.TabIndex = 2;
@@ -97,6 +98,16 @@ namespace ACT_Plugin
             label3.TabIndex = 3;
             label3.Text = "TTS Voice:";
             label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label4
+            // 
+            label4.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            label4.Location = new System.Drawing.Point(85, 81);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(79, 45);
+            label4.TabIndex = 7;
+            label4.Text = "TTS Rate:";
+            label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // comboBoxDevice
             // 
@@ -169,20 +180,20 @@ namespace ACT_Plugin
             this.trackBarVoiceRate.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.trackBarVoiceRate.ValueChanged += new System.EventHandler(this.trackBarVoiceRate_ValueChanged);
             // 
-            // label4
+            // dataGridViewLexicon
             // 
-            label4.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            label4.Location = new System.Drawing.Point(85, 81);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(79, 45);
-            label4.TabIndex = 7;
-            label4.Text = "TTS Rate:";
-            label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.dataGridViewLexicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.dataGridViewLexicon.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewLexicon.Location = new System.Drawing.Point(88, 132);
+            this.dataGridViewLexicon.Name = "dataGridViewLexicon";
+            this.dataGridViewLexicon.Size = new System.Drawing.Size(559, 189);
+            this.dataGridViewLexicon.TabIndex = 8;
             // 
             // NuSound
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.dataGridViewLexicon);
             this.Controls.Add(label4);
             this.Controls.Add(this.trackBarVoiceRate);
             this.Controls.Add(this.comboBoxTTSAPI);
@@ -192,11 +203,12 @@ namespace ACT_Plugin
             this.Controls.Add(label1);
             this.Controls.Add(this.comboBoxDevice);
             this.Name = "NuSound";
-            this.Size = new System.Drawing.Size(760, 199);
+            this.Size = new System.Drawing.Size(760, 337);
             ((System.ComponentModel.ISupportInitialize)(this.directSoundDeviceInfoBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.voiceInfoBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.synthFactoryBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarVoiceRate)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewLexicon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -210,6 +222,7 @@ namespace ACT_Plugin
         private SafeBindingSource directSoundDeviceInfoBindingSource;
         private SafeBindingSource synthFactoryBindingSource;
         private SafeBindingSource voiceInfoBindingSource;
+        private DataGridView dataGridViewLexicon;
         private TrackBar trackBarVoiceRate;
 
         public NuSound()
@@ -223,9 +236,8 @@ namespace ACT_Plugin
 		string settingsFile;
 		SettingsSerializer xmlSettings;
         FormActMain.PlaySoundDelegate oldPlaySoundMethod;
+        FormActMain.PlayTtsDelegate oldPlayTtsMethod;
 
-        byte[] originalTTS;
-        IntPtr ACT_TTSMethod;
         static TrackBar tbarTtsVol;
         private class FormActMain_newTTS : FormActMain
         {
@@ -240,6 +252,15 @@ namespace ACT_Plugin
                     ttsVol = tbarTtsVol.Value;
                 AudioPlayer.PlayTTS(text, ttsVol);
             }
+        }
+
+        void PlayTtsAudioPlayer(string text)
+        {
+            string fixtext = text.Replace("/", " ");
+            Int32 ttsVol = 100;
+            if (tbarTtsVol != null)
+                ttsVol = tbarTtsVol.Value;
+            AudioPlayer.PlayTTS(text, ttsVol);
         }
 
         void PlaySoundAudioPlayer(string file, Int32 volumePercent)
@@ -275,13 +296,11 @@ namespace ACT_Plugin
             // reduce delay for first spoken text
             TTSProvider.SpeakAsync("", 0);
 
-            // Create some sort of parsing event handler.  After the "+=" hit TAB twice and the code will be generated for you.
-            IntPtr new_TTSMethod = Replacer.GetFunctionPointer(typeof(FormActMain_newTTS).GetMethod("newTTS", BindingFlags.Instance | BindingFlags.Public).MethodHandle);
-            ACT_TTSMethod = Replacer.GetFunctionPointer(typeof(FormActMain).GetMethod("TTS", BindingFlags.Instance | BindingFlags.Public).MethodHandle);
-            Replacer.InsertJumpToFunction(ACT_TTSMethod, new_TTSMethod, out originalTTS);
-
             oldPlaySoundMethod = ActGlobals.oFormActMain.PlaySoundMethod;
             ActGlobals.oFormActMain.PlaySoundMethod = new FormActMain.PlaySoundDelegate(PlaySoundAudioPlayer);
+
+            oldPlayTtsMethod = ActGlobals.oFormActMain.PlayTtsMethod;
+            ActGlobals.oFormActMain.PlayTtsMethod = new FormActMain.PlayTtsDelegate(PlayTtsAudioPlayer);
 
             lblStatus.Text = "Plugin Started";
         }
@@ -289,8 +308,8 @@ namespace ACT_Plugin
 		public void DeInitPlugin()
 		{
 			// Unsubscribe from any events you listen to when exiting!
+            ActGlobals.oFormActMain.PlayTtsMethod = oldPlayTtsMethod;
             ActGlobals.oFormActMain.PlaySoundMethod = oldPlaySoundMethod;
-            Replacer.RestoreFunction(ACT_TTSMethod, originalTTS);
             tbarTtsVol = null;
 
 			SaveSettings();
